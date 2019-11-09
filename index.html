@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>todolist</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="./css/index.css">
+
+  </head>
+  <!-- 使用SUi组件库打造 -->
+  <body>
+    <!-- 父组件 -->
+      <div id="app">
+            <div class="page-group">
+                    <div class="page page-current">
+                    <!-- Tab   头部 -->
+                    <Tab></Tab>
+                    <!-- Container   内容组件 -->
+                    <!-- 父子通信：在子组件生绑定一个自定义属性 -->
+                    <!-- 子父通信：在子组件发布事件 -->
+                    <Container 
+                    :todos = 'newTodos'
+                    @change_flag = 'changeFlag'
+                    @check = "check"
+                      :change_mask_flag = 'changeMaskFlag'
+                      @add = 'add'
+                    ></Container>
+
+                    <!-- 底部 -->
+                    <tab-bar 
+                    :type = 'type'
+                    @get_type = "changeType"
+                    ></tab-bar>
+
+                    <!-- 遮罩层 -->
+                    <my-mask :remove = 'remove' :active_index = "active_index"  v-if = "maskFlag" :close_mask = 'closeMask'></my-mask>
+                    </div>
+                </div>
+      </div>
+      <!-- 实例化范围外注册模板 -->
+      <!-- Tab模板 -->
+      <template id="tab">
+          <header class="bar bar-nav">
+              <a class="icon icon-left pull-left"></a>
+              <span class="icon icon-edit pull-right" @click = "change_input_flag" ></span>
+              <h1 class="title">xuehao</h1>
+            </header>
+      </template>
+      <!-- 内容组件模板 -->
+      <template id="container">
+        <div class="content">
+          <!-- 头部控制开关：非父子通信 -->
+          添加内容：<input type="text" v-if = "input_flag" @keyup.enter = 'addItem'>
+          <!-- 渲染列表 -->
+            <div class="card"
+                  v-for = "(todo,index) in todos"
+                  :key = 'todo.id'
+            >
+                <div class="card-content">
+                  <div class="card-content-inner">
+                    <p> {{todo.task}} </p>
+                    <div class="btn-box pull-right">
+                      <button class="button button-success"
+                      :class = '{"button-fill":todo.done}'
+                      @click = "changeContainerFlag (index)"
+                      >
+                          <span class="icon icon-check"></span>
+                      </button>
+                      <button 
+                      class="button button-danger"
+                      @click = "checkDone(index)"
+                      >
+                          <span class="icon icon-remove"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </template>
+
+      <!-- 弹窗模板 -->
+      <template id="mask">
+        <div class="mask-box">
+          <div class="bg"  @click = 'close_mask'></div>
+          <div class="mask-content">
+            <p>你确定要删除吗？</p>
+            <button class="button button-primary butotn-fill pull-right" @click.self = 'confirm' >确定</button>
+          </div>
+        </div>
+      </template>
+
+      <!-- 底部的导航栏 -->
+      <template id = "tabbar">
+        <footer>
+          <ul>
+            <li class="circle" 
+            v-for = "tabbar in tabbars" 
+            :key = "tabbar.id"
+            :class = "[tabbar.class,type == tabbar.text && 'circle-fill']"
+            @click = 'changeType(tabbar.text)'
+            
+            >{{ tabbar.text }}</li>
+          </ul>
+        </footer>
+      </template>
+      <script src="../../lib/vue.js"></script>
+      <script src="./js/index.js"></script>
+      <script>
+      </script>
+  </body>
+</html>
